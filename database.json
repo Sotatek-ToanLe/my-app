@@ -1,0 +1,50 @@
+{
+  "todos": [
+    {
+      "userId": 35,
+      "id": 12,
+      "title": "todo ",
+      "completed": false
+    },
+    {
+      "userId": 28,
+      "id": 30,
+      "title": "todo 1",
+      "completed": false
+    },
+    {
+      "userId": 7,
+      "id": 93,
+      "title": "todo 2",
+      "completed": false
+    },
+    {
+      "userId": 78,
+      "id": 91,
+      "title": "todo 3",
+      "completed": false
+    },
+    {
+      "userId": 26,
+      "id": 28,
+      "completed": false
+    },
+    {
+      "userId": 35,
+      "id": 92,
+      "completed": false
+    }
+  ],
+  "auth": [
+    {
+      "id": 1,
+      "username": "Toanle",
+      "password": "12345"
+    },
+    {
+      "email": "eve.holt@reqres.in",
+      "password": "cityslicka",
+      "id": 2
+    }
+  ]
+}
