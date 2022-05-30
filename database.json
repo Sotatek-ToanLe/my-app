@@ -23,16 +23,6 @@
       "id": 91,
       "title": "todo 3",
       "completed": false
-    },
-    {
-      "userId": 26,
-      "id": 28,
-      "completed": false
-    },
-    {
-      "userId": 35,
-      "id": 92,
-      "completed": false
     }
   ],
   "auth": [
