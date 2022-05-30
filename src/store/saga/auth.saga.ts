@@ -10,7 +10,7 @@ import {
 import { AnyAction } from "redux";
 import axios from "axios";
 import { LoginResponse } from "../../types";
-import { setToken } from "../actions";
+import { removeToken, setToken } from "../actions";
 
 const url = "https://reqres.in/api/login";
 
@@ -28,7 +28,6 @@ function* loginWithEmailPassword(
   try {
     const response = yield call(loginUser, email, password);
     if (response.token) {
-      localStorage.setItem("token", response.token);
       yield put(setToken(response.token));
     }
     return response.token;
@@ -41,6 +40,10 @@ export function* watchLogin() {
   yield takeEvery(LOGIN_SUCCESS, loginWithEmailPassword);
 }
 
+export function* watchRemoveToken() {
+  yield put(removeToken());
+}
+
 export default function* authSaga() {
-  yield all([fork(watchLogin)]);
+  yield all([fork(watchLogin), fork(watchRemoveToken)]);
 }

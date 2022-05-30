@@ -4,12 +4,7 @@ import { useEffect } from "react";
 
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import {
-  actionAddSuccess,
-  actionEditSuccess,
-  addTodo,
-  editTodo,
-} from "../../../store/actions";
+import { addTodo, editTodo } from "../../../store/actions";
 import { Todo } from "../../../types";
 import useStyles from "./styles";
 interface Props {
@@ -21,13 +16,14 @@ export const TodoAction: React.FC<Props> = ({ type, defaultValues }) => {
   const dispatch = useDispatch();
   const {
     handleSubmit,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, errors },
     control,
     setValue,
   } = useForm({
     defaultValues: {
       title: type === "edit" ? defaultValues.title : "",
     },
+    mode: "onSubmit",
   });
 
   const onSubmit = async (title: any) => {
@@ -52,27 +48,41 @@ export const TodoAction: React.FC<Props> = ({ type, defaultValues }) => {
   }, [defaultValues]);
   return (
     <div>
-      <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
-        <Controller
-          control={control}
-          name="title"
-          render={({
-            field: { onChange, onBlur, value, name, ref },
-            fieldState: { invalid, isTouched, isDirty, error },
-            formState,
-          }) => (
-            <TextField
-              id="outlined-basic"
-              label="Title"
-              variant="outlined"
-              value={value}
-              inputRef={ref}
-              onChange={onChange}
-              name={name}
-            />
-          )}
-        />
-        <Button type="submit" color="default" variant="contained">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className={classes.formControl}>
+          <Controller
+            control={control}
+            name="title"
+            rules={{ required: "This field cannot be empty " }}
+            render={({
+              field: { onChange, onBlur, value, name, ref },
+              fieldState: { invalid, isTouched, isDirty, error },
+              formState,
+            }) => (
+              <>
+                <TextField
+                  id="outlined-basic"
+                  label="Title"
+                  variant="outlined"
+                  value={value}
+                  inputRef={ref}
+                  onChange={onChange}
+                  name={name}
+                />
+                {errors.title && (
+                  <span style={{ color: "red" }}>{errors.title?.message} </span>
+                )}
+              </>
+            )}
+          />
+        </div>
+
+        <Button
+          type="submit"
+          color="default"
+          variant="contained"
+          disabled={Boolean(errors.title)}
+        >
           {" "}
           {type === "add" ? "Add" : "Change"}
         </Button>

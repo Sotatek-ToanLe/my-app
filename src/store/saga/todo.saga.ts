@@ -26,7 +26,7 @@ import {
 } from "../actions";
 import { AnyAction } from "redux";
 
-const url = "https://jsonplaceholder.typicode.com/todos";
+const url = "http://localhost:2000/todos";
 
 const getTodoList = async () => {
   const response = await axios.get<Todo[]>(url);
@@ -57,9 +57,8 @@ function* deleteTodoWithAPI(
   const response = yield call(deleteTodo, action.payload);
   if (response.status === 200) {
     const todos = yield call(getTodoList);
-    const result = todos.filter((el: Todo) => el.id !== action.payload);
     //@ts-ignore
-    yield put(getTodoListSuccess({ todos: result }));
+    yield put(getTodoListSuccess({ todos: todos }));
   }
 }
 export function* watchDeleteTodo() {
@@ -80,9 +79,8 @@ function* postTodoWithAPI(
     const response = yield call(postTodo, action.payload);
     if (response) {
       const todos = yield call(getTodoList);
-      const result = [...todos, action.payload];
       //@ts-ignore
-      yield put(getTodoListSuccess({ todos: result }));
+      yield put(getTodoListSuccess({ todos: todos }));
     }
   } catch (error) {
     console.log(error);
@@ -102,13 +100,9 @@ function* putTodoWithAPI(
     const response = yield call(putTodo, action.payload);
     if (response) {
       const todos = yield call(getTodoList);
-      const result = todos.map((el) =>
-        el.id === action.payload.id
-          ? { ...el, title: action.payload.title }
-          : { ...el }
-      );
+
       //@ts-ignore
-      yield put(getTodoListSuccess({ todos: result }));
+      yield put(getTodoListSuccess({ todos: todos }));
     }
   } catch (error) {
     console.log(error);

@@ -26,10 +26,12 @@ export const TodoList: React.FC<Props> = ({
   return (
     <div className={classes.container}>
       {todoList?.length &&
-        todoList?.slice(1, 10).map((item) => {
+        todoList?.map((item) => {
           return (
             <div key={item.id} className={classes.list}>
               <Typography variant="h6">{item.title}</Typography>
+              <Typography variant="h6">{item.completed}</Typography>
+
               <div>
                 <Button
                   variant="contained"

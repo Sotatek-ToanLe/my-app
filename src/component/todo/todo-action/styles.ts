@@ -7,13 +7,14 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     form: {
       display: "flex",
-      justifyContent: "center",
+      justifyContent: "",
       marginTop: 30,
       "& div": {
         marginRight: 10,
       },
       "& button": {},
     },
+    formControl: {},
   };
 });
 export default useStyles;

@@ -50,10 +50,6 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
   const todoList = useSelector((s: AppState) => s.todo.todo.todos);
   const loading = useSelector((s: AppState) => s.todo.loading);
 
-  const [list, setList] = useState<_Todo[]>([]);
-  console.log("loading", todoList);
-  console.log("list", list);
-
   useEffect(() => {
     dispatch(getTodoList());
   }, []);
