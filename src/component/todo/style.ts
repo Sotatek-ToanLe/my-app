@@ -23,6 +23,11 @@ const useStyles = makeStyles((theme: Theme) => {
       width: "50%",
       margin: "auto",
     },
+    header: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: 30,
+    },
   };
 });
 export default useStyles;

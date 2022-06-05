@@ -20,33 +20,14 @@ import { Todo as _Todo } from "../../types";
 interface TodoProps {
   handleSubmitTodo: (data: any) => any;
 }
-const prioritiesStatus: { [key: string]: number } = {
-  ["High"]: 0,
-  ["Medium"]: 1,
-  ["Low"]: 2,
-};
-const errRequired = "This field cannot be empty";
+
 export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [defaultValues, setDefaultValues] = useState<_Todo>({} as _Todo);
   const [type, setType] = useState("add");
-  const {
-    handleSubmit,
-    control,
-    formState: { errors, isValid, isDirty },
-    reset,
-  } = useForm({
-    defaultValues: {
-      title: "",
-      status: false,
-      priority: 1,
-    },
-  });
-  const onSubmit = (data: any) => {
-    handleSubmitTodo(data);
-    reset();
-  };
+  const [open, setOpen] = useState(false);
+
   const todoList = useSelector((s: AppState) => s.todo.todo.todos);
   const loading = useSelector((s: AppState) => s.todo.loading);
 
@@ -56,17 +37,45 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
 
   const handleEditTodo = (todo: _Todo) => {
     setType("edit");
+    setOpen(true);
     if (todo) {
       setDefaultValues(todo);
+    } else {
+      setDefaultValues({} as _Todo);
     }
   };
   const handleDeleteTodo = (id: number) => {
     dispatch(deleteTodo(id));
   };
+
+  console.log("defaultValues", defaultValues);
+
   return (
     <div className={classes.main}>
-      <Typography variant="h4">Todo Page</Typography>
-      <TodoAction type={type} defaultValues={defaultValues} />
+      <div className={classes.header}>
+        <Typography variant="h4">Todo Page</Typography>
+        <Button
+          onClick={() => {
+            setOpen(true);
+            setType("add");
+            setDefaultValues({} as _Todo);
+          }}
+          variant="contained"
+          color="primary"
+        >
+          Add new todo
+        </Button>
+      </div>
+      <TodoAction
+        type={type}
+        defaultValues={defaultValues}
+        open={open}
+        handleClose={() => {
+          setOpen(false);
+          setType("");
+          setDefaultValues({} as _Todo);
+        }}
+      />
       {loading ? (
         <TodoList
           todoList={todoList}

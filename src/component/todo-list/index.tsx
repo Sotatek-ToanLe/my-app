@@ -3,6 +3,11 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   Typography,
 } from "@material-ui/core";
 
@@ -11,6 +16,7 @@ import { Todo } from "../../types";
 import { useDispatch } from "react-redux";
 import { deleteTodo, deleteTodoSuccess } from "../../store/actions";
 import axios from "axios";
+import { TodoRow } from "./todo-row";
 interface Props {
   todoList: Todo[];
   handleEditTodo: (todo: Todo) => void;
@@ -22,37 +28,16 @@ export const TodoList: React.FC<Props> = ({
   handleDeleteTodo,
 }) => {
   const classes = useStyles();
-  const dispath = useDispatch();
   return (
     <div className={classes.container}>
-      {todoList?.length &&
-        todoList?.map((item) => {
-          return (
-            <div key={item.id} className={classes.list}>
-              <Typography variant="h6">{item.title}</Typography>
-              <Typography variant="h6">{item.completed}</Typography>
-
-              <div>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditTodo(item)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    handleDeleteTodo(item.id);
-                  }}
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          );
-        })}
+      {todoList?.map((todo, index) => (
+        <TodoRow
+          todo={todo}
+          key={index}
+          handleDeleteTodo={handleDeleteTodo}
+          handleEditTodo={handleEditTodo}
+        />
+      ))}
     </div>
   );
 };
