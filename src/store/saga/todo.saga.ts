@@ -14,8 +14,9 @@ import {
   ADD_TODO,
   DELETE_TODO_SUCCESS,
   EDIT_TODO,
+  GET_TOTAL,
 } from "../constant";
-import { getTodoListSuccess, getTotalCount } from "../actions";
+import { getTodoListSuccess, getTotalCountSuccess } from "../actions";
 import { AnyAction } from "redux";
 
 const url = "http://localhost:2000/todos";
@@ -29,20 +30,28 @@ const getTodoList = async (params?: TodoRequest) => {
   }
 };
 
+export function* getTotalCountWithAPI(): Generator<StrictEffect, any, Todo[]> {
+  const result = yield call(getTodoList);
+  if (result) {
+    yield put(getTotalCountSuccess(result.length));
+  }
+}
+
 export function* getTodoListWithAPI(
   action: AnyAction
 ): Generator<StrictEffect, any, Todo[]> {
   const response = yield call(getTodoList, action.payload);
-  const result = yield call(getTodoList);
   //@ts-ignore
   yield put(getTodoListSuccess({ todos: response }));
-  yield put(getTotalCount(result.length));
+}
+
+export function* watchGetTotalCount() {
+  yield takeLatest(GET_TOTAL, getTotalCountWithAPI);
 }
 
 export function* watchGetTodoList() {
   yield takeLatest(GET_TODO_LIST, getTodoListWithAPI);
 }
-
 const deleteTodo = async (id: number) => {
   const res = await axios.delete(`${url}/${id}`);
   if (res) {
@@ -108,5 +117,6 @@ export default function* todoSaga() {
     fork(watchEditTodo),
     fork(watchAddTodo),
     fork(watchDeleteTodo),
+    fork(watchGetTotalCount),
   ]);
 }

@@ -71,7 +71,6 @@ export const TodoAction: React.FC<Props> = ({
         status: data.status,
       };
       dispatch(editTodo(todo));
-      onAdd({ ...params });
     } else {
       const todo = {
         id: Math.floor(Math.random() * 100),
@@ -83,10 +82,10 @@ export const TodoAction: React.FC<Props> = ({
         startTime: moment(new Date()).format("DD/MM/YYYY HH:mm"),
       };
       dispatch(addTodo(todo));
-      onAdd({ ...params });
     }
     reset();
     handleClose();
+    onAdd({ ...params });
   };
   const onError = (errors: any, e: any) => console.log("ddd", errors, e);
 

@@ -3,7 +3,7 @@ import { Typography, Button } from "@material-ui/core";
 import useStyles from "./style";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store/reducers";
-import { deleteTodo, getTodoList } from "../../store/actions";
+import { deleteTodo, getTodoList, getTotalCount } from "../../store/actions";
 import { TodoList } from "../todo-list";
 import { TodoAction } from "./todo-action";
 import { Todo as _Todo, TodoRequest } from "../../types";
@@ -21,12 +21,16 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
   const [open, setOpen] = useState(false);
   const [params, setParams] = useState<TodoRequest>({
     _page: 1,
-    _limit: 5,
+    _limit: 3,
   });
 
   const todoList = useSelector((s: AppState) => s.todo.todo.todos);
   const loading = useSelector((s: AppState) => s.todo.loading);
   const total = useSelector((s: AppState) => s.todo.total);
+
+  useEffect(() => {
+    dispatch(getTotalCount());
+  }, [todoList]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     dispatch(getTodoList(params));
@@ -40,11 +44,18 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
     } else {
       setDefaultValues({} as _Todo);
     }
+
     dispatch(getTodoList({ ...params }));
   };
   const handleDeleteTodo = (id: number) => {
     dispatch(deleteTodo(id));
-    dispatch(getTodoList({ ...params }));
+
+    if (todoList.length <= 1) {
+      dispatch(getTodoList({ ...params, _page: +params._page - 1 }));
+      setParams({ ...params, _page: +params._page - 1 });
+    } else {
+      dispatch(getTodoList({ ...params }));
+    }
   };
 
   return (

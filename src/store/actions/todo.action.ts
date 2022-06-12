@@ -5,6 +5,8 @@ import {
   GET_TODO_LIST,
   GET_TODO_LIST_SUCCESS,
   DELETE_TODO,
+  GET_TOTAL,
+  GET_TOTAL_SUCCESS,
 } from "../constant";
 
 export const getTodoList = (params: TodoRequest) => {
@@ -39,9 +41,14 @@ export const deleteTodo = (id: number) => {
   };
 };
 
-export const getTotalCount = (total: number) => {
+export const getTotalCount = () => {
   return {
-    type: "GET_TOTAL",
+    type: GET_TOTAL,
+  };
+};
+export const getTotalCountSuccess = (total: number) => {
+  return {
+    type: GET_TOTAL_SUCCESS,
     payload: total,
   };
 };

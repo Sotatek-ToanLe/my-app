@@ -9,6 +9,8 @@ import {
   EDIT_TODO,
   GET_TODO_LIST,
   GET_TODO_LIST_SUCCESS,
+  GET_TOTAL,
+  GET_TOTAL_SUCCESS,
 } from "../constant";
 
 const initialState = {
@@ -26,7 +28,11 @@ export const todoReducer = (state = initialState, action: AnyAction) => {
         todo: action.payload,
         loading: true,
       };
-    case "GET_TOTAL":
+    case GET_TOTAL:
+      return {
+        ...state,
+      };
+    case GET_TOTAL_SUCCESS:
       return {
         ...state,
         total: action.payload,
