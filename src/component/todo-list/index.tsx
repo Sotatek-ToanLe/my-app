@@ -1,21 +1,8 @@
 import React from "react";
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@material-ui/core";
 
 import useStyles from "./style";
-import { Todo } from "../../types";
-import { useDispatch } from "react-redux";
-import { deleteTodo, deleteTodoSuccess } from "../../store/actions";
-import axios from "axios";
+import { Todo, TodoRequest } from "../../types";
+
 import { TodoRow } from "./todo-row";
 interface Props {
   todoList: Todo[];

@@ -1,12 +1,12 @@
 import { Button, Link, TextField, Typography } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useStyles from "./style";
 import { Controller, useForm } from "react-hook-form";
-import { LoginResponse, LoginUser } from "../../types";
+import { LoginUser } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserSuccess, setToken } from "../../store/actions";
+import { loginUserSuccess } from "../../store/actions";
 import { AppState } from "../../store/reducers";
-import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 const Login = () => {
   const classes = useStyles();
   const dispath = useDispatch();
@@ -14,11 +14,7 @@ const Login = () => {
   const history = useHistory();
   console.log(token);
 
-  const {
-    handleSubmit,
-    formState: { errors, isDirty, isValid },
-    control,
-  } = useForm({
+  const { handleSubmit, control } = useForm({
     defaultValues: {
       email: "eve.holt@reqres.in",
       password: "cityslicka",
@@ -33,7 +29,7 @@ const Login = () => {
     if (token) {
       history.replace("/todo");
     }
-  }, [token]);
+  }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className={classes.main}>
       <Typography variant="h4">Login Form</Typography>
@@ -42,11 +38,7 @@ const Login = () => {
           <Controller
             control={control}
             name="email"
-            render={({
-              field: { onChange, onBlur, value, name, ref },
-              fieldState: { invalid, isTouched, isDirty, error },
-              formState,
-            }) => (
+            render={({ field: { value, ref } }) => (
               <TextField
                 id="outlined-basic"
                 label="Email"

@@ -1,13 +1,10 @@
 import { AnyAction } from "redux";
-import { LoginUser, ActionLoginProps } from "../../types";
 import {
-  LOGIN_OUT,
   LOGIN_SUCCESS,
   LOGIN_USER,
   REMOVE_TOKEN,
   SET_TOKEN,
 } from "../constant";
-import { useSelector } from "react-redux";
 
 const initState = {
   token: "",

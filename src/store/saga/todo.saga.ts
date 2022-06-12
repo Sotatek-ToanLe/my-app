@@ -8,37 +8,35 @@ import {
   takeEvery,
   takeLatest,
 } from "redux-saga/effects";
-import { Todo } from "../../types";
+import { Todo, TodoRequest } from "../../types";
 import {
-  ACTION_ADD_SUCCESS,
   GET_TODO_LIST,
-  ACTION_EDIT_SUCCESS,
   ADD_TODO,
-  DELETE_TODO,
   DELETE_TODO_SUCCESS,
   EDIT_TODO,
 } from "../constant";
-import {
-  actionAddSuccess,
-  actionEditSuccess,
-  deleteTodoSuccess,
-  getTodoListSuccess,
-} from "../actions";
+import { getTodoListSuccess, getTotalCount } from "../actions";
 import { AnyAction } from "redux";
 
 const url = "http://localhost:2000/todos";
 
-const getTodoList = async () => {
-  const response = await axios.get<Todo[]>(url);
+const getTodoList = async (params?: TodoRequest) => {
+  const response = await axios.get<Todo[]>(url, {
+    params: params ? params : undefined,
+  });
   if (response.data) {
     return response.data;
   }
 };
 
-function* getTodoListWithAPI(): Generator<StrictEffect, any, Todo[]> {
-  const response = yield call(getTodoList);
+export function* getTodoListWithAPI(
+  action: AnyAction
+): Generator<StrictEffect, any, Todo[]> {
+  const response = yield call(getTodoList, action.payload);
+  const result = yield call(getTodoList);
   //@ts-ignore
   yield put(getTodoListSuccess({ todos: response }));
+  yield put(getTotalCount(result.length));
 }
 
 export function* watchGetTodoList() {
@@ -54,11 +52,10 @@ const deleteTodo = async (id: number) => {
 function* deleteTodoWithAPI(
   action: AnyAction
 ): Generator<StrictEffect, any, any> {
-  const response = yield call(deleteTodo, action.payload);
-  if (response.status === 200) {
-    const todos = yield call(getTodoList);
-    //@ts-ignore
-    yield put(getTodoListSuccess({ todos: todos }));
+  try {
+    yield call(deleteTodo, action.payload);
+  } catch (error) {
+    console.log(error);
   }
 }
 export function* watchDeleteTodo() {
@@ -76,12 +73,7 @@ function* postTodoWithAPI(
   action: AnyAction
 ): Generator<StrictEffect, any, Todo[]> {
   try {
-    const response = yield call(postTodo, action.payload);
-    if (response) {
-      const todos = yield call(getTodoList);
-      //@ts-ignore
-      yield put(getTodoListSuccess({ todos: todos }));
-    }
+    yield call(postTodo, action.payload);
   } catch (error) {
     console.log(error);
   }
@@ -97,13 +89,7 @@ function* putTodoWithAPI(
   action: AnyAction
 ): Generator<StrictEffect, any, Todo[]> {
   try {
-    const response = yield call(putTodo, action.payload);
-    if (response) {
-      const todos = yield call(getTodoList);
-
-      //@ts-ignore
-      yield put(getTodoListSuccess({ todos: todos }));
-    }
+    yield call(putTodo, action.payload);
   } catch (error) {
     console.log(error);
   }

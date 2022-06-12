@@ -18,7 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { ReactComponent as CloseIcon } from "../../../../src/assess/icon/close.svg";
 import { addTodo, editTodo } from "../../../store/actions";
-import { Todo } from "../../../types";
+import { Todo, TodoRequest } from "../../../types";
 import useStyles from "./styles";
 import moment from "moment";
 interface Props {
@@ -26,18 +26,22 @@ interface Props {
   defaultValues: Todo;
   open: boolean;
   handleClose: () => any;
+  onAdd: (params: TodoRequest) => void;
+  params: TodoRequest;
 }
 export const TodoAction: React.FC<Props> = ({
   type,
   defaultValues,
   open,
   handleClose,
+  onAdd,
+  params,
 }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const {
     handleSubmit,
-    formState: { isDirty, isValid, errors },
+    formState: { errors },
     control,
     reset,
     setValue,
@@ -46,7 +50,6 @@ export const TodoAction: React.FC<Props> = ({
       ...defaultValues,
       status: defaultValues?.status ? defaultValues?.status : "0",
     },
-    mode: "onSubmit",
   });
 
   useEffect(() => {
@@ -55,9 +58,9 @@ export const TodoAction: React.FC<Props> = ({
     setValue("label", defaultValues.label);
     setValue("category", defaultValues.category);
     setValue("status", defaultValues.status);
-  }, [defaultValues]);
+  }, [defaultValues]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onSubmit = async (data: Todo) => {
+  const onSubmit = (data: Todo) => {
     if (type === "edit") {
       const todo = {
         ...defaultValues,
@@ -68,6 +71,7 @@ export const TodoAction: React.FC<Props> = ({
         status: data.status,
       };
       dispatch(editTodo(todo));
+      onAdd({ ...params });
     } else {
       const todo = {
         id: Math.floor(Math.random() * 100),
@@ -79,10 +83,12 @@ export const TodoAction: React.FC<Props> = ({
         startTime: moment(new Date()).format("DD/MM/YYYY HH:mm"),
       };
       dispatch(addTodo(todo));
+      onAdd({ ...params });
     }
     reset();
     handleClose();
   };
+  const onError = (errors: any, e: any) => console.log("ddd", errors, e);
 
   return (
     <div className={classes.dialog}>
@@ -108,17 +114,16 @@ export const TodoAction: React.FC<Props> = ({
           />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
+        <form
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className={classes.form}
+        >
           <div className={classes.formControl}>
             <Controller
               control={control}
               name="title"
               rules={{ required: "This field cannot be empty " }}
-              render={({
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error },
-                formState,
-              }) => (
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
                 <>
                   <TextField
                     id="outlined-basic"
@@ -144,11 +149,7 @@ export const TodoAction: React.FC<Props> = ({
               control={control}
               name="detail"
               rules={{ required: "This field cannot be empty " }}
-              render={({
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error },
-                formState,
-              }) => (
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
                 <>
                   <TextField
                     id="outlined-basic"
@@ -177,11 +178,7 @@ export const TodoAction: React.FC<Props> = ({
               control={control}
               name="category"
               rules={{ required: "This field cannot be empty " }}
-              render={({
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error },
-                formState,
-              }) => (
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
                 <>
                   <Select
                     id="outlined-basic"
@@ -189,7 +186,8 @@ export const TodoAction: React.FC<Props> = ({
                     variant="outlined"
                     inputRef={ref}
                     onChange={onChange}
-                    value={value}
+                    value={value ? value : ""}
+                    name={name}
                     fullWidth
                     inputProps={{ "aria-label": "Without label" }}
                   >
@@ -213,11 +211,7 @@ export const TodoAction: React.FC<Props> = ({
               control={control}
               name="label"
               rules={{ required: "This field cannot be empty " }}
-              render={({
-                field: { onChange, onBlur, value, name, ref },
-                fieldState: { invalid, isTouched, isDirty, error },
-                formState,
-              }) => (
+              render={({ field: { onChange, onBlur, value, name, ref } }) => (
                 <>
                   <Select
                     id="outlined-basic"
@@ -225,7 +219,8 @@ export const TodoAction: React.FC<Props> = ({
                     variant="outlined"
                     inputRef={ref}
                     onChange={onChange}
-                    value={value}
+                    value={value ? value : ""}
+                    name={name}
                     fullWidth
                     inputProps={{ "aria-label": "Without label" }}
                   >
@@ -249,7 +244,6 @@ export const TodoAction: React.FC<Props> = ({
             <Controller
               control={control}
               name="status"
-              rules={{ required: "This field cannot be empty " }}
               render={({ field }) => (
                 <RadioGroup {...field}>
                   <FormControlLabel

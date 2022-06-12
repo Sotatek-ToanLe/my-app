@@ -1,4 +1,4 @@
-import { LOGIN_SUCCESS, SET_TOKEN } from "../constant";
+import { LOGIN_SUCCESS } from "../constant";
 import {
   all,
   call,

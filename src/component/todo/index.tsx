@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  TextField,
-  Typography,
-  Button,
-  Select,
-  MenuItem,
-  Input,
-} from "@material-ui/core";
-import { Controller, useForm } from "react-hook-form";
+import { Typography, Button } from "@material-ui/core";
 import useStyles from "./style";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../store/reducers";
-import { GET_TODO_LIST_SUCCESS } from "../../store/constant";
 import { deleteTodo, getTodoList } from "../../store/actions";
 import { TodoList } from "../todo-list";
 import { TodoAction } from "./todo-action";
-import { Todo as _Todo } from "../../types";
+import { Todo as _Todo, TodoRequest } from "../../types";
+import { CustomePagination } from "../../core/pagination";
 
 interface TodoProps {
   handleSubmitTodo: (data: any) => any;
@@ -27,13 +19,18 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
   const [defaultValues, setDefaultValues] = useState<_Todo>({} as _Todo);
   const [type, setType] = useState("add");
   const [open, setOpen] = useState(false);
+  const [params, setParams] = useState<TodoRequest>({
+    _page: 1,
+    _limit: 5,
+  });
 
   const todoList = useSelector((s: AppState) => s.todo.todo.todos);
   const loading = useSelector((s: AppState) => s.todo.loading);
+  const total = useSelector((s: AppState) => s.todo.total);
 
   useEffect(() => {
-    dispatch(getTodoList());
-  }, []);
+    dispatch(getTodoList(params));
+  }, [params, total]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleEditTodo = (todo: _Todo) => {
     setType("edit");
@@ -43,12 +40,12 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
     } else {
       setDefaultValues({} as _Todo);
     }
+    dispatch(getTodoList({ ...params }));
   };
   const handleDeleteTodo = (id: number) => {
     dispatch(deleteTodo(id));
+    dispatch(getTodoList({ ...params }));
   };
-
-  console.log("defaultValues", defaultValues);
 
   return (
     <div className={classes.main}>
@@ -75,6 +72,8 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
           setType("");
           setDefaultValues({} as _Todo);
         }}
+        onAdd={setParams}
+        params={params}
       />
       {loading ? (
         <TodoList
@@ -86,6 +85,14 @@ export const Todo: React.FC<TodoProps> = ({ handleSubmitTodo }) => {
         <Typography variant="h6" color="primary">
           Loading...
         </Typography>
+      )}
+
+      {todoList && (
+        <CustomePagination
+          handleOnchange={setParams}
+          params={params}
+          total={Math.ceil(total / +params._limit)}
+        />
       )}
     </div>
   );

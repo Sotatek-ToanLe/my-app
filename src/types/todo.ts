@@ -7,3 +7,7 @@ export interface Todo {
   label: number;
   startTime?: string;
 }
+export interface TodoRequest {
+  _page: string | number;
+  _limit: string | number;
+}

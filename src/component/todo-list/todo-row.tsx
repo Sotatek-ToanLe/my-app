@@ -42,7 +42,7 @@ export const TodoRow = ({
         {renderCategory(todo.category)}
         <span>{todo.startTime}</span>
         <p className={classes.label}>{renderLabel(todo.label)}</p>
-        <Checkbox checked={checked} color="primary" />
+        <Checkbox checked={checked} color="primary" disabled />
         <Button onClick={() => handleEditTodo(todo)} variant="contained">
           Edit
         </Button>

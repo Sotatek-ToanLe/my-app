@@ -14,13 +14,23 @@ import {
 const initialState = {
   todo: [] as Todo[],
   loading: false,
+  total: 0,
 };
 export const todoReducer = (state = initialState, action: AnyAction) => {
   switch (action.type) {
     case GET_TODO_LIST:
       return { ...state };
     case GET_TODO_LIST_SUCCESS:
-      return { ...state, todo: action.payload, loading: true };
+      return {
+        ...state,
+        todo: action.payload,
+        loading: true,
+      };
+    case "GET_TOTAL":
+      return {
+        ...state,
+        total: action.payload,
+      };
     case ADD_TODO:
       return {
         ...state,
